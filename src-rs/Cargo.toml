@@ -63,7 +63,7 @@ rand = { version = "=0.7.3", features = ["small_rng"] }
 lazy_static = "=1.4.0"
 
 # `NotNan<f64>`, `OrderedFloat<f64>`
-ordered-float = "=1.0.2"
+ordered-float = "=1.1.1"
 
 # ASCII文字列
 ascii = "=1.0.0"
