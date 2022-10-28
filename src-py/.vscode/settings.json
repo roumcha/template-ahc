@@ -1,0 +1,5 @@
+{
+  "code-runner.executorMapByGlob": {
+    "app.py": "cd $dir/../ && dotnet run --project ahc-tool -c Release"
+  }
+}

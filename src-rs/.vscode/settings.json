@@ -1,0 +1,5 @@
+{
+  "code-runner.executorMapByGlob": {
+    "main.rs": "cd $dir/../ && cargo build --release && cd ../ && dotnet run --project ahc-tool -c Release"
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "code-runner.executorMapByGlob": {
+    "Program.cs": "cd $dir && dotnet publish -c Release -o ../ahc-tool-temp/bin && cd ../ && dotnet run --project ahc-tool -c Release"
+  }
+}

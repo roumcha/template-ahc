@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ahc-tool", "ahc-tool\ahc-tool.csproj", "{867311C9-6397-4B37-B38B-61B61899C8BC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "app", "src-cs\app.csproj", "{39F7783C-6A2A-41B9-9C99-CF6785C1F753}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "app", "src-fs\app.fsproj", "{DA71CC69-9DD0-4729-9E91-400B4AAAF247}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{867311C9-6397-4B37-B38B-61B61899C8BC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{867311C9-6397-4B37-B38B-61B61899C8BC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{867311C9-6397-4B37-B38B-61B61899C8BC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{867311C9-6397-4B37-B38B-61B61899C8BC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{39F7783C-6A2A-41B9-9C99-CF6785C1F753}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{39F7783C-6A2A-41B9-9C99-CF6785C1F753}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{39F7783C-6A2A-41B9-9C99-CF6785C1F753}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{39F7783C-6A2A-41B9-9C99-CF6785C1F753}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DA71CC69-9DD0-4729-9E91-400B4AAAF247}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DA71CC69-9DD0-4729-9E91-400B4AAAF247}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DA71CC69-9DD0-4729-9E91-400B4AAAF247}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DA71CC69-9DD0-4729-9E91-400B4AAAF247}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

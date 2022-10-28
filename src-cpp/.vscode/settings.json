@@ -1,0 +1,5 @@
+{
+  "code-runner.executorMapByGlob": {
+    "*.cpp": "cd $dir && g++-9 \"$fileName\" -o ../ahc-tool-temp/bin/app -std=gnu++17 -Wall -Wextra -DONLINE_JUDGE -I\"<ACL のパス>\" && cd ../ && dotnet run --project ahc-tool -c Release"
+  }
+}
