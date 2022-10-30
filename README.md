@@ -1,16 +1,17 @@
-# 準備
+# 環境
 
 - .NET SDK 6.0
 - VSCode
-- Code Runner
+  - Code Runner 拡張
 - 解答に使う言語のコンパイル環境
 
-# 設定
+# 初期設定
 
 - settings.jsonc を記入
 - ahc-tool-temp/in に入力ケースを配置
 - VSCode の設定で Code Runner の実行コマンドを設定
 - 必要なら ahc-tool を改造
+- 要らん言語のフォルダは削除
 
 # メモ
 

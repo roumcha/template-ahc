@@ -87,7 +87,7 @@ maplit = "=1.0.2"
 #either = "=1.5.3"
 
 # `BTreeMap`, `BTreeSet`, `HashMap`, `HashSet`, `Vec`の永続データ構造版
-#im-rc = "=14.3.0"
+im-rc = "=14.3.0"
 
 # 可変長bit set
 #fixedbitset = "=0.2.0"

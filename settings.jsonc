@@ -2,16 +2,16 @@
   "IsInteractiveProblem": false,
 
   // 解答バイナリまたは Python スクリプト
-  "SubmissionBinOrScript": "./ahc-tool-temp/bin/app.exe",
+  "SubmissionBinOrScript": "./src-rs/target/release/main.exe",
 
   // 公式テストツールのバイナリ（インタラクティブ問題）
-  "TestTool": "./ahc-tool-temp/bin/eval.exe",
+  "TestTool": "./tools/target/release/eval.exe",
 
   // テストツールのコマンドライン引数（インタラクティブ問題）。$in, $out, $cmd 変数が使用可能
   "TestToolArgs": "$in $cmd",
 
   // 公式採点ツールのバイナリ（非インタラクティブ問題）
-  "EvaluationTool": "./ahc-tool-temp/bin/eval.exe",
+  "EvaluationTool": "./tools/target/release/eval.exe",
 
   // 採点ツールのコマンドライン引数（非インタラクティブ問題）。$in, $out, $cmd 変数が使用可能
   "EvaluationToolArgs": "$in $out",
@@ -20,5 +20,5 @@
   "ParallelDegree": 1,
 
   // 実行時間制限（ミリ秒）
-  "TimeLimitInMilliSeconds": 1500
+  "TimeLimitInMilliSeconds": 1000
 }

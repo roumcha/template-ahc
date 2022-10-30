@@ -42,7 +42,7 @@ class Program {
 
         var avg = 0.0;
         var cnt = 0;
-        object outLock = new();
+        object lockObj = new();
 
         // 並列実行
         var results =
@@ -55,12 +55,11 @@ class Program {
                 var res = new Executor(inputFile, _settings).Run();
 
                 // 結果を表示
-                lock (outLock) {
-                    COut.ClearLine();
-                    COut.PrintSummary(res);
+                lock (lockObj) {
+                    COut.BackToPreviousLine();
                     avg = (avg * cnt + res.Score) / (cnt + 1);
                     cnt++;
-                    COut.Default($"平均: {avg:0.0}");
+                    COut.PrintSummary(res, $"平均: {avg:0.0}");
                 }
 
                 return res;

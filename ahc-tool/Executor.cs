@@ -9,7 +9,7 @@ partial class Executor {
     readonly FileInfo _inputFile, _outFile, _errFile, _evalFile;
 
     static readonly Regex s_WaRegex = new(
-        @"([Ii]llegal|[Ii]nvalid|[Tt]oo [Mm]any|[Ee]xception|[Ee]rror|[Uu]nexpected|[Oo]ut ?[O]of|[Tt]erminated)"
+        @"([Ii]llegal|[Ii]nvalid|[Tt]oo|[Ee]xception|[Ee]rror|[Uu]nexpected|[Oo]ut ?[O]of|[Tt]erminated)"
     );
 
     static readonly Regex s_ScoreRegex = new(
@@ -17,8 +17,8 @@ partial class Executor {
     );
 
     public Executor(FileInfo inputFile, Settings settings) {
-        _inputFile=inputFile;
-        _settings=settings;
+        _inputFile = inputFile;
+        _settings = settings;
         _testCaseName = Path.GetFileNameWithoutExtension(_inputFile.Name);
 
         _outFile = new(
@@ -55,8 +55,8 @@ partial class Executor {
     }
 
     ExecutionResult RunInteractive() {
-        var (status1, time)= this.ExecuteTestTool();
-        var (status2, score)= this.ParseEvaluationFile();
+        var (status1, time) = this.ExecuteTestTool();
+        var (status2, score) = this.ParseEvaluationFile();
 
         return new(
             TestCaseName: _testCaseName,
@@ -91,6 +91,7 @@ partial class Executor {
         };
 
         var process = new Process() { StartInfo = pInfo };
+        process.Exited += (s, e) => stopwatch.Stop();
         stopwatch.Start();
         process.Start();
 
@@ -99,8 +100,7 @@ partial class Executor {
         var errTask = Task.Run(() => ForwardText(process.StandardError, errStream));
 
         process.WaitForExit();
-        stopwatch.Stop();
-        Task.WaitAll(inTask, outTask, errTask);
+        inTask.Wait(); outTask.Wait(); errTask.Wait();
 
         var time = stopwatch.ElapsedMilliseconds;
         var status =
@@ -123,10 +123,37 @@ partial class Executor {
 
         var process = new Process() { StartInfo = pInfo };
         process.Start();
-
         var fwTask = Task.Run(() => ForwardText(process.StandardOutput, evalStream));
+        process.WaitForExit(); fwTask.Wait();
+    }
 
-        Task.WaitAll(fwTask, process.WaitForExitAsync());
+    (Status, int Time) ExecuteTestTool() {
+        using var outStream = new StreamWriter(_outFile.FullName);
+        using var evalStream = new StreamWriter(_evalFile.FullName);
+        var stopwatch = new Stopwatch();
+
+        var pInfo = new ProcessStartInfo() {
+            FileName = $"\"{_settings.TestTool.FullName}\"",
+            Arguments = this.ReplaceArgVariables(_settings.TestToolArgs),
+            RedirectStandardOutput = true,
+            RedirectStandardError = true
+        };
+
+        var process = new Process() { StartInfo = pInfo };
+        process.Exited += (s, e) => stopwatch.Stop();
+
+        stopwatch.Start();
+        process.Start();
+        var outTask = Task.Run(() => ForwardText(process.StandardOutput, outStream));
+        var evalTask = Task.Run(() => ForwardText(process.StandardError, evalStream));
+        process.WaitForExit(); outTask.Wait(); evalTask.Wait();
+
+        var time = stopwatch.ElapsedMilliseconds;
+        var status =
+            process.ExitCode != 0 ? Status.RE
+            : time > _settings.TimeLimit ? Status.TLE
+            : Status.AC;
+        return (status, (int)time);
     }
 
     (Status, double Score) ParseEvaluationFile() {
@@ -146,37 +173,6 @@ partial class Executor {
         }
 
         return (Status.AC, score);
-    }
-
-    (Status, int Time) ExecuteTestTool() {
-        using var outStream = new StreamWriter(_outFile.FullName);
-        using var evalStream = new StreamWriter(_evalFile.FullName);
-        var stopwatch = new Stopwatch();
-
-        var pInfo = new ProcessStartInfo() {
-            FileName = $"\"{_settings.TestTool.FullName}\"",
-            Arguments = this.ReplaceArgVariables(_settings.TestToolArgs),
-            RedirectStandardOutput = true,
-            RedirectStandardError = true
-        };
-
-        var process = new Process() { StartInfo = pInfo };
-        stopwatch.Start();
-        process.Start();
-
-        var outTask = Task.Run(() => ForwardText(process.StandardOutput, outStream));
-        var evalTask = Task.Run(() => ForwardText(process.StandardError, evalStream));
-
-        process.WaitForExit();
-        stopwatch.Stop();
-        Task.WaitAll(outTask, evalTask);
-
-        var time = stopwatch.ElapsedMilliseconds;
-        var status =
-            process.ExitCode != 0 ? Status.RE
-            : time > _settings.TimeLimit ? Status.TLE
-            : Status.AC;
-        return (status, (int)time);
     }
 
     string ReplaceArgVariables(string argStr) {

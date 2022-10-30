@@ -42,7 +42,19 @@ static class COut {
         }
     }
 
-    public static void PrintSummary(ExecutionResult result) {
+    public static void BackToPreviousLine() {
+        lock (s_lock) {
+            var top = Console.CursorTop;
+            Console.SetCursorPosition(0, top);
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, top - 1);
+            Console.Write(new string(' ', Console.WindowWidth));
+            Console.SetCursorPosition(0, top - 1);
+            Console.ResetColor();
+        }
+    }
+
+    public static void PrintSummary(ExecutionResult result, string otherInfo) {
         lock (s_lock) {
             if (result.Status == Status.AC) {
                 Console.ResetColor();
@@ -54,6 +66,9 @@ static class COut {
             Console.Write($"{result.TestCaseName}\t");
             Console.Write($"{result.Score:0.0}pt\t");
             Console.WriteLine($"{result.Time:D4}ms");
+
+            Console.ResetColor();
+            Console.WriteLine(otherInfo);
         }
     }
 
