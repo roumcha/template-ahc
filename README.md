@@ -15,7 +15,7 @@ AtCoder Heuristic Contest に使っている各言語のテンプレートと、
 ## 対応言語
 
 - C++, Rust, C#, F#
-- Python (py コマンド利用可能)
+- Python
 - その他、実行ファイルにコンパイルされる任意の言語\
   （一からフォルダや設定を構成する必要があります）
 
@@ -29,7 +29,8 @@ AtCoder Heuristic Contest に使っている各言語のテンプレートと、
 
 - C# / F# → [.NET Runtime 3.1](https://dotnet.microsoft.com/ja-jp/download/dotnet/3.1) をインストール
 - Rust → Rustup で 1.42.0 ツールチェーンをインストール
-- Python → Python (できれば 3.8) をインストール
+- Python → Python (できれば 3.8) をインストール。\
+  Python Launcher (`py.exe`) のデフォルトで実行されます。
 - C++ → 使用するコンパイラをインストール
 
 ## 初期設定
