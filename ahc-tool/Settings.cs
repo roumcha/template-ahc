@@ -40,6 +40,10 @@ record Settings(
             .Build()
             .Get<Loaded>();
 
+        if (loaded is null) {
+            throw new FileLoadException("./settings.json を読み込めません。");
+        }
+
         var submission = new FileInfo(loaded.SubmissionBinOrScript!);
         if (!submission.Exists) {
             throw new FileNotFoundException("提出プログラムが見つかりません。");

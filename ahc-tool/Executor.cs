@@ -8,14 +8,6 @@ partial class Executor {
     readonly string _testCaseName;
     readonly FileInfo _inputFile, _outFile, _errFile, _evalFile;
 
-    static readonly Regex s_WaRegex = new(
-        @"([Ii]llegal|[Ii]nvalid|[Tt]oo|[Ee]xception|[Ee]rror|[Uu]nexpected|[Oo]ut ?[O]of|[Tt]erminated)"
-    );
-
-    static readonly Regex s_ScoreRegex = new(
-        @"(?<=[Ss]core[ =:]+)[\d]+(\.[\d]+)?(?=[ \n\r$])"
-    );
-
     public Executor(FileInfo inputFile, Settings settings) {
         _inputFile = inputFile;
         _settings = settings;
@@ -156,14 +148,26 @@ partial class Executor {
         return (status, (int)time);
     }
 
+    [GeneratedRegex(
+        @"(illegal|invalid|too|exception|error|unexpected|out ?of|terminated)",
+        RegexOptions.IgnoreCase
+    )]
+    private static partial Regex WaRegex();
+
+    [GeneratedRegex(
+        @"(?<=score[ =:]+)[\\d]+(\\.[\\d]+)?(?=[ \\n\\r$])",
+        RegexOptions.IgnoreCase
+    )]
+    private static partial Regex ScoreRegex();
+
     (Status, double Score) ParseEvaluationFile() {
         var text = File.ReadAllText(_evalFile.FullName);
 
-        if (s_WaRegex.IsMatch(text)) {
+        if (WaRegex().IsMatch(text)) {
             return (Status.WA, 0);
         }
 
-        var scoreMatches = s_ScoreRegex.Matches(text);
+        var scoreMatches = ScoreRegex().Matches(text);
         if (scoreMatches.Count == 0) {
             throw new Exception("スコアが読み取れませんでした。");
         }
