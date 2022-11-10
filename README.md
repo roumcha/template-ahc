@@ -70,7 +70,7 @@ AtCoder Heuristic Contest に使っている各言語のテンプレートと、
 
 ### 6. `src-○○/.vscode/settings.json` の編集
 
-`code-runner.executorMapByGlob` にコマンドを設定して、以下が一度にできるようにする
+`code-runner.executorMapByGlob` に、以下を一度に行うコマンドを設定する。
 
 - 提出コードをコンパイル
 - その実行ファイルを、上記 2 で `SubmissionBinOrScript` に設定した場所に配置する
