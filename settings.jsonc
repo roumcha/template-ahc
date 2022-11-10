@@ -1,24 +1,34 @@
 {
+  // 提出コードのバイナリまたは Python スクリプトのパス
+  // （例）
+  // "SubmissionBinOrScript": "./src-rs/target/release/main.exe",
+  // "SubmissionBinOrScript": "./ahc-tool-temp/bin/app.exe",
+  // "SubmissionBinOrScript": "./src-py/app.py",
+  "SubmissionBinOrScript": "",
+
+  // インタラクティブ問題の場合、true
   "IsInteractiveProblem": false,
 
-  // 解答バイナリまたは Python スクリプト
-  "SubmissionBinOrScript": "./src-rs/target/release/main.exe",
-
-  // 公式テストツールのバイナリ（インタラクティブ問題）
+  // 公式テストツールのパス（インタラクティブ問題のみ有効）
   "TestTool": "./tools/target/release/eval.exe",
 
-  // テストツールのコマンドライン引数（インタラクティブ問題）。$in, $out, $cmd 変数が使用可能
+  // 公式テストツールのコマンドライン引数（インタラクティブ問題のみ有効）
+  // 以下の変数が使用可能:
+  // $in（入力ファイルのパス）, $out（出力ファイルのパス）, $cmd（提出コードの実行コマンド）
   "TestToolArgs": "$in $cmd",
 
-  // 公式採点ツールのバイナリ（非インタラクティブ問題）
+  // 公式採点ツールのパス（非インタラクティブ問題のみ有効）
   "EvaluationTool": "./tools/target/release/eval.exe",
 
-  // 採点ツールのコマンドライン引数（非インタラクティブ問題）。$in, $out, $cmd 変数が使用可能
+  // 採点ツールのコマンドライン引数（非インタラクティブ問題のみ有効）
+  // 以下の変数が使用可能:
+  // $in（入力ファイルのパス）, $out（出力ファイルのパス）, $cmd（提出コードの実行コマンド）
   "EvaluationToolArgs": "$in $out",
 
-  // 同時実行数（CPUスレッド - 2 くらい？）
-  "ParallelDegree": 1,
+  // 同時実行数
+  // （ファイル入出力処理のため CPU スレッド数を余らせておいた方がいいかも）
+  "ParallelDegree": 2,
 
-  // 実行時間制限（ミリ秒）
+  // 各ケースの実行時間制限（ミリ秒）
   "TimeLimitInMilliSeconds": 1000
 }

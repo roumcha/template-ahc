@@ -11,6 +11,7 @@
 
     <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
     <InvariantGlobalization>true</InvariantGlobalization>
+
     <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
     <PublishSingleFile>true</PublishSingleFile>
     <PublishReadyToRun>true</PublishReadyToRun>

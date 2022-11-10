@@ -1,4 +1,4 @@
-﻿// ---------- Lib --------------
+// ---------- Lib --------------
 [<AutoOpen>]
 module CIn =
     open System
@@ -77,6 +77,6 @@ module COut =
 
 COut.noflush ()
 
-stdout.WriteLine 0
+
 
 stdout.Flush()
