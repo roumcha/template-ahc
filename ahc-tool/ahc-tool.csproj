@@ -2,12 +2,20 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <Version>3.0.1</Version>
+    <Version>4</Version>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+    <InvariantGlobalization>true</InvariantGlobalization>
     <WarningsAsErrors>nullable</WarningsAsErrors>
+
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <SelfContained>false</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <DebugType>embedded</DebugType>
+
+    <!-- メモ: 動的コード生成があるのでネイティブ AOT はできなさそう。 -->
   </PropertyGroup>
 
   <ItemGroup>
