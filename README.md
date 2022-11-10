@@ -73,11 +73,11 @@ AtCoder Heuristic Contest に使っている各言語のテンプレートと、
 `code-runner.executorMapByGlob` に、以下を一度に行うコマンドを設定する。
 
 - 提出コードをコンパイル
-- その実行ファイルを、上記 2 で `SubmissionBinOrScript` に設定した場所に配置する
-- このファイル (`README.md`) のある階層に `cd`
+- コンパイルした実行ファイルを、上記 2 で `SubmissionBinOrScript` に設定した場所に配置する
+- **この**ファイル (`README.md`) のある階層に `cd`
 - `dotnet run --project ahc-tool -c Release` を実行
 
-## 使用方法
+## コンテスト中の使用方法
 
 提出用ソースファイルを書き終えたら、そのまま開いた状態で Ctrl + Alt + N を押す。
 
