@@ -1,16 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
+    <Version>0</Version>
+
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+
     <Nullable>enable</Nullable>
-    <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
     <WarningsAsErrors>nullable</WarningsAsErrors>
-    <DebugType>embedded</DebugType>
+
+    <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+    <InvariantGlobalization>true</InvariantGlobalization>
     <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
     <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>false</SelfContained>
     <PublishReadyToRun>true</PublishReadyToRun>
+    <SelfContained>false</SelfContained>
+    <DebugType>embedded</DebugType>
   </PropertyGroup>
 
 </Project>

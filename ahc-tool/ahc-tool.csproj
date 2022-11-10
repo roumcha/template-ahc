@@ -1,20 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
     <Version>4</Version>
+
+    <OutputType>Exe</OutputType>
     <TargetFramework>net7.0</TargetFramework>
+
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
-    <InvariantGlobalization>true</InvariantGlobalization>
     <WarningsAsErrors>nullable</WarningsAsErrors>
 
+    <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+    <InvariantGlobalization>true</InvariantGlobalization>
     <PublishReadyToRun>true</PublishReadyToRun>
     <SelfContained>false</SelfContained>
     <PublishSingleFile>true</PublishSingleFile>
     <DebugType>embedded</DebugType>
-
     <!-- メモ: 動的コード生成があるのでネイティブ AOT はできなさそう。 -->
   </PropertyGroup>
 
