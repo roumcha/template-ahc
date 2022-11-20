@@ -65,7 +65,7 @@ static class COut {
             Console.Write($"[{result.Status}]\t");
             Console.Write($"{result.TestCaseName}\t");
             Console.Write($"{result.Score:0.0}pt\t");
-            Console.WriteLine($"{result.Time:D4}ms");
+            Console.WriteLine($"{result.Time,4}ms");
 
             Console.ResetColor();
             Console.WriteLine(otherInfo);

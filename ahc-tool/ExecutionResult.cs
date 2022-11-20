@@ -1,6 +1,6 @@
 namespace AhcTool;
 
-enum Status { IE, RE, WA, TLE, AC }
+enum Status { IE, TLE, RE, WA, AC }
 
 record ExecutionResult(
     string TestCaseName,

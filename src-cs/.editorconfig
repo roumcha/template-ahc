@@ -12,7 +12,7 @@ dotnet_diagnostic.IDE2003.severity = none
 dotnet_diagnostic.IDE1006.severity = none
 
 csharp_style_conditional_delegate_call = true:suggestion
-csharp_prefer_braces = true:suggestion
+csharp_prefer_braces = when_multiline:suggestion
 csharp_style_prefer_method_group_conversion = true:suggestion
 csharp_indent_labels = one_less_than_current
 insert_final_newline = true

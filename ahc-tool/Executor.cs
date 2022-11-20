@@ -120,6 +120,7 @@ partial class Executor {
     }
 
     (Status, int Time) ExecuteTestTool() {
+        var inputText = File.ReadAllText(_inputFile.FullName);
         using var outStream = new StreamWriter(_outFile.FullName);
         using var evalStream = new StreamWriter(_evalFile.FullName);
         var stopwatch = new Stopwatch();
@@ -127,18 +128,26 @@ partial class Executor {
         var pInfo = new ProcessStartInfo() {
             FileName = $"\"{_settings.TestTool.FullName}\"",
             Arguments = this.ReplaceArgVariables(_settings.TestToolArgs),
+            RedirectStandardInput = true,
             RedirectStandardOutput = true,
-            RedirectStandardError = true
+            RedirectStandardError = true,
         };
 
         var process = new Process() { StartInfo = pInfo };
         process.Exited += (s, e) => stopwatch.Stop();
-
         stopwatch.Start();
         process.Start();
+
+        var inTask = Task.Run(() => {
+            process.StandardInput.WriteLine(inputText);
+            process.StandardInput.Close();
+        });
         var outTask = Task.Run(() => ForwardText(process.StandardOutput, outStream));
         var evalTask = Task.Run(() => ForwardText(process.StandardError, evalStream));
-        process.WaitForExit(); outTask.Wait(); evalTask.Wait();
+
+        inTask.Wait();
+        outTask.Wait();
+        evalTask.Wait();
 
         var time = stopwatch.ElapsedMilliseconds;
         var status =
@@ -155,7 +164,7 @@ partial class Executor {
     private static partial Regex WaRegex();
 
     [GeneratedRegex(
-        @"(?<=score[ =:]+)[\\d]+(\\.[\\d]+)?(?=[ \\n\\r$])",
+        @"(?<=score[ =:]+)[\d]+(\.[\d]+)?(?=[ \n\r$])",
         RegexOptions.IgnoreCase
     )]
     private static partial Regex ScoreRegex();
@@ -181,7 +190,7 @@ partial class Executor {
 
     string ReplaceArgVariables(string argStr) {
         var submissionCmd = _settings.LanguageMode == LanguageMode.Python
-            ? $"py \"{_settings.SubmissionBinOrScript.FullName}\""
+            ? $"py.exe \"{_settings.SubmissionBinOrScript.FullName}\""
             : $"\"{_settings.SubmissionBinOrScript.FullName}\"";
 
         return argStr

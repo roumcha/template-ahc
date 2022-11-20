@@ -55,7 +55,7 @@ record Settings(
         }
 
         var evaluation = new FileInfo(loaded.EvaluationTool!);
-        if (!evaluation.Exists) {
+        if (!loaded.IsInteractiveProblem && !evaluation.Exists) {
             throw new FileNotFoundException("採点プログラムが見つかりません。");
         }
 

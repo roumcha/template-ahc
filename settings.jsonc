@@ -10,12 +10,12 @@
   "IsInteractiveProblem": false,
 
   // 公式テストツールのパス（インタラクティブ問題のみ有効）
-  "TestTool": "./tools/target/release/eval.exe",
+  "TestTool": "./tools/target/release/tester.exe",
 
   // 公式テストツールのコマンドライン引数（インタラクティブ問題のみ有効）
   // 以下の変数が使用可能:
   // $in（入力ファイルのパス）, $out（出力ファイルのパス）, $cmd（提出コードの実行コマンド）
-  "TestToolArgs": "$in $cmd",
+  "TestToolArgs": "$cmd",
 
   // 公式採点ツールのパス（非インタラクティブ問題のみ有効）
   "EvaluationTool": "./tools/target/release/eval.exe",
@@ -26,7 +26,8 @@
   "EvaluationToolArgs": "$in $out",
 
   // 同時実行数
-  // （ファイル入出力処理のため CPU スレッド数を余らせておいた方がいいかも）
+  // （ファイル入出力処理や、ウイルス対策も回るため、
+  //  CPU スレッド数を余らせておいた方がいいかも）
   "ParallelDegree": 2,
 
   // 各ケースの実行時間制限（ミリ秒）
