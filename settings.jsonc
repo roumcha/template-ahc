@@ -1,35 +1,50 @@
 {
-  // 提出コードのバイナリまたは Python スクリプトのパス
-  // （例）
-  // "SubmissionBinOrScript": "./src-rs/target/release/main.exe",
-  // "SubmissionBinOrScript": "./ahc-tool-temp/bin/app.exe",
-  // "SubmissionBinOrScript": "./src-py/app.py",
-  "SubmissionBinOrScript": "",
-
-  // インタラクティブ問題の場合、true
+  // インタラクティブ問題か否か
   "IsInteractiveProblem": false,
 
-  // 公式テストツールのパス（インタラクティブ問題のみ有効）
-  "TestTool": "./tools/target/release/tester.exe",
+  // 問題の実行時間制限（ミリ秒）
+  "ProblemTimeLimit": 2000,
 
-  // 公式テストツールのコマンドライン引数（インタラクティブ問題のみ有効）
-  // 以下の変数が使用可能:
-  // $in（入力ファイルのパス）, $out（出力ファイルのパス）, $cmd（提出コードの実行コマンド）
-  "TestToolArgs": "$cmd",
+  // 問題のメモリ制限（MB）（未実装。無視されます）
+  "ProblemMemoryLimit": 1024,
 
-  // 公式採点ツールのパス（非インタラクティブ問題のみ有効）
-  "EvaluationTool": "./tools/target/release/eval.exe",
+  // 入力ファイルのあるフォルダ
+  "InFilesDir": "local-test-files/in",
 
-  // 採点ツールのコマンドライン引数（非インタラクティブ問題のみ有効）
-  // 以下の変数が使用可能:
-  // $in（入力ファイルのパス）, $out（出力ファイルのパス）, $cmd（提出コードの実行コマンド）
-  "EvaluationToolArgs": "$in $out",
+  // 除外する入力ファイル名
+  "InFilesExcluded": [".keep"],
+
+  // コンパイルコマンド（無ければ空）
+  "CompilationCmd": "dotnet publish -c Release -o publish --nologo",
+
+  // コンパイル時間の上限（ミリ秒）
+  "CompilationTimeLimit": 15000,
+
+  // コンパイル成功を判定するファイル
+  "CompilationSuccessFile": "publish/app.exe",
+
+  // 実行コマンド
+  "ExecutionCmd": "publish/app.exe",
+
+  // 採点コマンド
+  // 変数: $in（入力ファイル）, $out（出力ファイル）
+  // 変数（インタラクティブ問題のみ）: $cmd（実行コマンド）
+  "EvaluationCmd": "vis.exe \"$in\" \"$out\"",
+
+  // 採点ツールの出力から RE を判定する正規表現（インタラクティブ問題のみ）
+  "ReRegex": "runtime ?error",
+
+  // 採点ツールの出力から WA を判定する正規表現
+  "WaRegex": "(illegal|invalid|too|exception|error|unexpected|out ?of|terminated|failed|panic)",
+
+  // 採点ツールの出力から実行時間を取り出す正規表現（インタラクティブ問題のみ）
+  "ExecutionTimeRegex": "(?<=time[ =:]+)[\\d]+(\\.[\\d]+)?(?=( ?ms| |\\n|\\r|$))",
+
+  // 採点ツールの出力から得点を取り出す正規表現
+  "ScoreRegex": "(?<=(score|cost) ?[=:] ?)[\\d]+(\\.[\\d]+)?(?=(pt| |\\n|\\r|$))",
 
   // 同時実行数
-  // （ファイル入出力処理や、ウイルス対策も回るため、
-  //  CPU スレッド数を余らせておいた方がいいかも）
-  "ParallelDegree": 2,
-
-  // 各ケースの実行時間制限（ミリ秒）
-  "TimeLimitInMilliSeconds": 1000
+  // ファイル入出力などのため、CPUコアを余らせた方がいいかも
+  // 0 の場合、min(1, CPUスレッド数 / 2 - 1) を自動的に設定します
+  "ParallelDegree": 0
 }

@@ -1,209 +1,104 @@
+using System.Diagnostics;
+using Cysharp.Diagnostics;
+
 namespace AhcTool;
 
-using System.Diagnostics;
-using System.Text.RegularExpressions;
-
-partial class Executor {
+class Executor {
+    readonly string _caseName;
+    readonly FileInfo _inFile, _outFile, _errFile, _evalFile;
     readonly Settings _settings;
-    readonly string _testCaseName;
-    readonly FileInfo _inputFile, _outFile, _errFile, _evalFile;
 
-    public Executor(FileInfo inputFile, Settings settings) {
-        _inputFile = inputFile;
+    public Executor(
+        string caseName,
+        FileInfo inFile, FileInfo outFile, FileInfo errFile, FileInfo evalFile,
+        Settings settings
+    ) {
+        _caseName = caseName;
+        _inFile = inFile; _outFile = outFile; _errFile = errFile; _evalFile = evalFile;
         _settings = settings;
-        _testCaseName = Path.GetFileNameWithoutExtension(_inputFile.Name);
-
-        _outFile = new(
-            Path.Combine(_settings.TempOutDir.FullName, $"{_testCaseName}_out.txt")
-        );
-
-        _errFile = new(
-            Path.Combine(_settings.TempOutDir.FullName, $"{_testCaseName}_err.txt")
-        );
-
-        _evalFile = new(
-            Path.Combine(_settings.TempOutDir.FullName, $"{_testCaseName}_eval.txt")
-        );
     }
 
-    public ExecutionResult Run()
-    => _settings.IsInteractiveProblem ? this.RunInteractive() : this.RunOnce();
-
-    ExecutionResult RunOnce() {
-        var (status1, time) = this.ExecuteSubmission();
-        this.ExecuteEvaluationTool();
-        var (status2, score) = this.ParseEvaluationFile();
-
-        return new(
-            TestCaseName: _testCaseName,
-            Status: (Status)Math.Min((int)status1, (int)status2),
-            Score: score,
-            Time: time,
-            InputFile: _inputFile,
-            OutputFile: _outFile,
-            EvaluationFile: _evalFile,
-            Msg: ""
-        );
-    }
-
-    ExecutionResult RunInteractive() {
-        var (status1, time) = this.ExecuteTestTool();
-        var (status2, score) = this.ParseEvaluationFile();
-
-        return new(
-            TestCaseName: _testCaseName,
-            Status: (Status)Math.Min((int)status1, (int)status2),
-            Score: score,
-            Time: time,
-            InputFile: _inputFile,
-            OutputFile: _outFile,
-            EvaluationFile: _evalFile,
-            Msg: ""
-        );
-    }
-
-    (Status, int Time) ExecuteSubmission() {
-        var inputText = File.ReadAllText(_inputFile.FullName);
+    public ExecutionResult Run() {
+        var inText = File.ReadAllText(_inFile.FullName);
         using var outStream = new StreamWriter(_outFile.FullName);
-        using var errStream = new StreamWriter(_errFile.FullName);
+        using var errStream = new StreamWriter(
+            _settings.IsInteractiveProblem ? _evalFile.FullName : _errFile.FullName
+        );
+
+        var cmd = _settings.IsInteractiveProblem
+            ? _settings.ExecutionCmd
+            : this.ReplaceArgVariables(_settings.EvaluationCmd);
+
         var stopwatch = new Stopwatch();
-
-        var pInfo = new ProcessStartInfo() {
-            FileName =
-                _settings.LanguageMode == LanguageMode.Python
-                ? "py"
-                : $"\"{_settings.SubmissionBinOrScript.FullName}\"",
-            Arguments =
-                _settings.LanguageMode == LanguageMode.Python
-                ? $"\"{_settings.SubmissionBinOrScript.FullName}\""
-                : "",
-            RedirectStandardInput = true,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true
-        };
-
-        var process = new Process() { StartInfo = pInfo };
-        process.Exited += (s, e) => stopwatch.Stop();
+        var (process, stdOut, stdErr) = ProcessX.GetDualAsyncEnumerable(cmd);
         stopwatch.Start();
-        process.Start();
-
-        var inTask = process.StandardInput.WriteLineAsync(inputText);
-        var outTask = Task.Run(() => ForwardText(process.StandardOutput, outStream));
-        var errTask = Task.Run(() => ForwardText(process.StandardError, errStream));
-
-        process.WaitForExit();
-        inTask.Wait(); outTask.Wait(); errTask.Wait();
-
-        var time = stopwatch.ElapsedMilliseconds;
-        var status =
-            process.ExitCode != 0 ? Status.RE
-            : time > _settings.TimeLimit ? Status.TLE
-            : Status.AC;
-        return (status, (int)time);
-    }
-
-    void ExecuteEvaluationTool() {
-        using var evalStream = new StreamWriter(_evalFile.FullName);
-
-        var pInfo = new ProcessStartInfo() {
-            FileName = $"\"{_settings.EvaluationTool.FullName}\"",
-            Arguments = this.ReplaceArgVariables(_settings.EvaluationToolArgs),
-            RedirectStandardInput = true,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true
-        };
-
-        var process = new Process() { StartInfo = pInfo };
-        process.Start();
-        var fwTask = Task.Run(() => ForwardText(process.StandardOutput, evalStream));
-        process.WaitForExit(); fwTask.Wait();
-    }
-
-    (Status, int Time) ExecuteTestTool() {
-        var inputText = File.ReadAllText(_inputFile.FullName);
-        using var outStream = new StreamWriter(_outFile.FullName);
-        using var evalStream = new StreamWriter(_evalFile.FullName);
-        var stopwatch = new Stopwatch();
-
-        var pInfo = new ProcessStartInfo() {
-            FileName = $"\"{_settings.TestTool.FullName}\"",
-            Arguments = this.ReplaceArgVariables(_settings.TestToolArgs),
-            RedirectStandardInput = true,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-        };
-
-        var process = new Process() { StartInfo = pInfo };
         process.Exited += (s, e) => stopwatch.Stop();
-        stopwatch.Start();
-        process.Start();
 
         var inTask = Task.Run(() => {
-            process.StandardInput.WriteLine(inputText);
+            process.StandardInput.WriteLine(inText);
             process.StandardInput.Close();
         });
-        var outTask = Task.Run(() => ForwardText(process.StandardOutput, outStream));
-        var evalTask = Task.Run(() => ForwardText(process.StandardError, evalStream));
+        var outTask = Task.Run(async () => {
+            await foreach (var item in stdOut) outStream.WriteLine(item);
+        });
+        var errTask = Task.Run(async () => {
+            await foreach (var item in stdErr) errStream.WriteLine(item);
+        });
 
-        inTask.Wait();
-        outTask.Wait();
-        evalTask.Wait();
+        if (!process.WaitForExit((int)(_settings.ProblemTimeLimit * 1.1))) {
+            process.Kill();
+        }
 
-        var time = stopwatch.ElapsedMilliseconds;
+        var re = CheckStdIO(inTask, outTask, errTask);
+
+        var time = Math.Max(
+            (int)stopwatch.ElapsedMilliseconds,
+            process.TotalProcessorTime.Milliseconds
+        );
+
         var status =
-            process.ExitCode != 0 ? Status.RE
-            : time > _settings.TimeLimit ? Status.TLE
-            : Status.AC;
-        return (status, (int)time);
-    }
+            time > _settings.ProblemTimeLimit
+                ? Status.TLE
+                : re ? Status.RE : Status.AC;
 
-    [GeneratedRegex(
-        @"(illegal|invalid|too|exception|error|unexpected|out ?of|terminated)",
-        RegexOptions.IgnoreCase
-    )]
-    private static partial Regex WaRegex();
+        process.Dispose();
 
-    [GeneratedRegex(
-        @"(?<=score[ =:]+)[\d]+(\.[\d]+)?(?=[ \n\r$])",
-        RegexOptions.IgnoreCase
-    )]
-    private static partial Regex ScoreRegex();
-
-    (Status, double Score) ParseEvaluationFile() {
-        var text = File.ReadAllText(_evalFile.FullName);
-
-        if (WaRegex().IsMatch(text)) {
-            return (Status.WA, 0);
-        }
-
-        var scoreMatches = ScoreRegex().Matches(text);
-        if (scoreMatches.Count == 0) {
-            throw new Exception("スコアが読み取れませんでした。");
-        }
-
-        if (!double.TryParse(scoreMatches[^1].Value, out var score)) {
-            throw new Exception("スコアが読み取れませんでした。");
-        }
-
-        return (Status.AC, score);
+        return new(
+            _caseName,
+            status,
+            time,
+            ""
+        );
     }
 
     string ReplaceArgVariables(string argStr) {
-        var submissionCmd = _settings.LanguageMode == LanguageMode.Python
-            ? $"py.exe \"{_settings.SubmissionBinOrScript.FullName}\""
-            : $"\"{_settings.SubmissionBinOrScript.FullName}\"";
-
         return argStr
-            .Replace("$in", $"\"{_inputFile.FullName}\"")
+            .Replace("$in", $"\"{_inFile.FullName}\"")
             .Replace("$out", $"\"{_outFile.FullName}\"")
-            .Replace("$cmd", submissionCmd);
+            .Replace("$cmd", _settings.ExecutionCmd);
     }
 
-    static void ForwardText(StreamReader source, StreamWriter target) {
-        while (!source.EndOfStream) {
-            if (source.ReadLine() is string s) {
-                target.WriteLine(s);
-            }
+    static bool CheckStdIO(Task inTask, Task outTask, Task errTask) {
+        var res = true;
+
+        try {
+            inTask.Wait();
+        } catch (Exception) {
+            res = false;
         }
+
+        try {
+            outTask.Wait();
+        } catch (Exception) {
+            res = false;
+        }
+
+        try {
+            errTask.Wait();
+        } catch (Exception) {
+            res = false;
+        }
+
+        return res;
     }
 }

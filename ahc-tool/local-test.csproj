@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Version>5</Version>
+
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <WarningsAsErrors>nullable</WarningsAsErrors>
+
+    <SatelliteResourceLanguages>en-US</SatelliteResourceLanguages>
+    <InvariantGlobalization>true</InvariantGlobalization>
+
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net7.0</TargetFramework>
+    <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+    <PublishAot>true</PublishAot>
+    <UseSystemResourceKeys>true</UseSystemResourceKeys>
+    <IlcOptimizationPreference>Speed</IlcOptimizationPreference>
+    <IlcGenerateStackTraceData>false</IlcGenerateStackTraceData>
+    <DebuggerSupport>false</DebuggerSupport>
+    <EnableUnsafeBinaryFormatterSerialization>false</EnableUnsafeBinaryFormatterSerialization>
+    <EventSourceSupport>false</EventSourceSupport>
+    <HttpActivityPropagationSupport>false</HttpActivityPropagationSupport>
+    <MetadataUpdaterSupport>false</MetadataUpdaterSupport>
+    <RootAllApplicationAssemblies>false</RootAllApplicationAssemblies>
+    <IlcGenerateCompleteTypeMetadata>false</IlcGenerateCompleteTypeMetadata>
+    <IlcDisableReflection>true</IlcDisableReflection>
+    <IlcOptimizationPreference>Size</IlcOptimizationPreference>
+    <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
+    <StripSymbols>true</StripSymbols>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <EditorConfigFiles Remove="./.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="./.editorconfig" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ConsoleAppFramework" Version="4.2.4" />
+    <PackageReference Include="Kokuban" Version="0.2.0" />
+    <PackageReference Include="ProcessX" Version="1.5.5" />
+  </ItemGroup>
+
+</Project>
